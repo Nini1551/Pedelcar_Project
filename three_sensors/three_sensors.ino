@@ -10,7 +10,6 @@ int echo_pins[3] = {FRONT_ECHO_PIN, LEFT_ECHO_PIN, RIGHT_ECHO_PIN};
 char lib_pins[3][6] = {"Front", "Right", "Left"};
 int trig_pin, echo_pin;
 float duration, distance;
-float[3] distances;
 
 void setup() {
   // put your setup code here, to run once:
@@ -36,7 +35,6 @@ void loop() {
     duration = pulseIn(echo_pin, HIGH);
     if (duration > 0){
       distance = (duration * 0.0343) / 2;
-      distances[i] = distance;
       Serial.print("Distance sensor ");
       Serial.print(lib_pins[i]);
       Serial.print(" :");
