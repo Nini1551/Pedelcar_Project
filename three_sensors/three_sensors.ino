@@ -5,6 +5,8 @@ const int LEFT_ECHO_PIN = 10;
 const int RIGHT_TRIG_PIN = 12;
 const int RIGHT_ECHO_PIN = 11;
 
+const int LED_PIN = 31;
+
 int trig_pins[3] = {FRONT_TRIG_PIN, LEFT_TRIG_PIN, RIGHT_TRIG_PIN};
 int echo_pins[3] = {FRONT_ECHO_PIN, LEFT_ECHO_PIN, RIGHT_ECHO_PIN};
 char lib_pins[3][6] = {"Front", "Right", "Left"};
@@ -12,25 +14,35 @@ int trig_pin, echo_pin;
 float duration, distance;
 float distances[3];
 
+char receivedChar;
+
 void setup() {
   // put your setup code here, to run once:
   for (int i=0; i<3; i++) {
     pinMode(trig_pins[i], OUTPUT);
     pinMode(echo_pins[i], INPUT);
   }
+  pinMode(LED_PIN, OUTPUT);
 
   Serial.begin(9600);
+  Serial1.begin(9600);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  for (int i=0; i<3; i++) {
-    duration = get_duration(i);
-    print_distance(duration, i);
+  if (Serial1.available()) {
+    receivedChar = Serial1.read();
+    Serial.print(receivedChar);
+    if (receivedChar != '\n') {
+      if (receivedChar == '1') {
+        digitalWrite(LED_PIN, HIGH);
+        print_distances();
+      } else if (receivedChar == '0') {
+        digitalWrite(LED_PIN, LOW);
+      }
+    }
   }
-  Serial.println();
-  delay(1000);
 }
 
 float get_distance(float duration) {
@@ -60,4 +72,12 @@ void print_distance(float duration, int index) {
     Serial.print(lib_pins[index]);
     Serial.println(" : No echo received");
   }
+}
+
+void print_distances() {
+  for (int i=0; i<3; i++) {
+    duration = get_duration(i);
+    print_distance(duration, i);
+  }
+  Serial.println();
 }
