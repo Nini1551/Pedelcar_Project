@@ -1,3 +1,5 @@
+// SET THE DISTANCES BEFORE ANYTHING
+
 const int FRONT_TRIG_PIN = 6;
 const int FRONT_ECHO_PIN = 7;
 const int LEFT_TRIG_PIN = 9;
@@ -7,14 +9,18 @@ const int RIGHT_ECHO_PIN = 11;
 
 const int LED_PIN = 31;
 
+const float MIN_DISTANCE = 15;
+
 int trig_pins[3] = {FRONT_TRIG_PIN, LEFT_TRIG_PIN, RIGHT_TRIG_PIN};
 int echo_pins[3] = {FRONT_ECHO_PIN, LEFT_ECHO_PIN, RIGHT_ECHO_PIN};
 char lib_pins[3][6] = {"Front", "Right", "Left"};
 int trig_pin, echo_pin;
 float duration, distance;
-float distances[3];
+float distances[3] = {100, 100, 100};
 
 char receivedChar;
+
+bool in_danger = false;
 
 void setup() {
   // put your setup code here, to run once:
@@ -35,10 +41,11 @@ void loop() {
     receivedChar = Serial1.read();
     Serial.print(receivedChar);
     if (receivedChar != '\n') {
-      if (receivedChar == '1') {
+      // in_danger = (distances[0] < MIN_DISTANCE) || (distances[1] < MIN_DISTANCE) || (distances[2] < MIN_DISTANCE);
+      if (receivedChar == '1' && !(in_danger)) {
         digitalWrite(LED_PIN, HIGH);
         print_distances();
-      } else if (receivedChar == '0') {
+      } else {
         digitalWrite(LED_PIN, LOW);
       }
     }
@@ -48,6 +55,7 @@ void loop() {
 float get_distance(float duration) {
   return (duration * 0.0343) / 2;
 }
+
 
 float get_duration(int index) {
     trig_pin = trig_pins[index];
