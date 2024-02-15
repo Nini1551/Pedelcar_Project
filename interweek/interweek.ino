@@ -10,7 +10,7 @@ const int RIGHT_ECHO_PIN = 6;
 const int FORWARD_LED_PIN = 8;
 const int BACKWARD_LED_PIN = 12;
 const int SERVO_PIN = 9;
-const int BUTTON_PIN = 13;
+// const int BUTTON_PIN = 13;
 const int MOTOR_PIN = 10;
 const int BACKWARD_PIN = 11;
 
@@ -75,15 +75,10 @@ void loop() {
         } else {
           go_forward();
         }
-      }
-      else if (digitalRead(BUTTON_PIN)==0){
-        turn_off_forward_motor(); 
-      }
-      delay(REFRESH_TIME);
-
       } else if (receivedChar == '0') {
         turn_off_backward_motor();
       }
+      delay(REFRESH_TIME);
     }
   } else {
     // Check for timeout
