@@ -31,6 +31,7 @@ const int REFRESH_TIME = 50;
 const int MOTOR_DELAY = 500;
 
 const float SOUND_SPEED = 0.0343;
+const float THROTTLE_RATIO = 1.6;
 
 Servo servo;
 
@@ -198,12 +199,8 @@ void go_forward() { // start the forward travel of the car
 void turn_on_motor() { // start the motor
   digitalWrite(FORWARD_LED_PIN, HIGH);
   
-  while (throttle < 245) {
+  while (throttle < max_throttle) {
   	ramping_throttle();
-  }
-  if (throttle > max_throttle) {
-    throttle = max_throttle;
-    analogWrite(MOTOR_PIN, throttle);
   }
 }
 
@@ -234,12 +231,12 @@ void turn_off_backward_motor() { // stop the motor in reverse
 
 void ramping_throttle() { // increment the throttle
   throttle += 5;
-  if(throttle > 245) {
-    throttle = 245;
+  if (throttle > max_throttle) {
+    throttle = max_throttle;
   }
   analogWrite(MOTOR_PIN,throttle);
   delay(1);
-  Serial.println(throttle);
+  // Serial.println(throttle);
 }
 
 bool is_button_active() { // Vrai lorsque le signal est activé
@@ -254,10 +251,10 @@ void serial_flush() {
 
 void set_max_speed(){
   if (distances[0] < distances[1] and distances[0] < distances[2]){
-    max_throttle = int(distances[0]/1.6);
+    max_throttle = int(distances[0]/THROTTLE_RATIO);
   } else if (distances[1] < distances[0] and distances[1] < distances[2]){
-    max_throttle = int(distances[1]/1.6);
+    max_throttle = int(distances[1]/THROTTLE_RATIO);
   } else if (distances[2] < distances[0] and distances[2] < distances[1]){
-    max_throttle = int(distances[2]/1.6);
+    max_throttle = int(distances[2]/THROTTLE_RATIO);
   }
 }
